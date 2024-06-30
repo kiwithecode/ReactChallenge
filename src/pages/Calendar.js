@@ -23,11 +23,11 @@ function Calendar() {
     setIsModalOpen(true);
   };
 
-  const handleSaveReminder = ({ reminder, time }) => {
+  const handleSaveReminder = ({ reminder, time, description }) => {
     if (selectedReminder) {
-      dispatch(editReminder(selectedDay, selectedReminder.id, { reminder, time }));
+      dispatch(editReminder(selectedDay, selectedReminder.id, { reminder, time, description }));
     } else {
-      dispatch(addReminder(selectedDay, { reminder, time }));
+      dispatch(addReminder(selectedDay, { reminder, time, description }));
     }
   };
 
@@ -72,9 +72,11 @@ function Calendar() {
           {daysArray.map(day => (
             <div key={day} className="calendar-day" onClick={() => handleDayClick(day)}>
               <span>{day}</span>
-              {reminders[day] && reminders[day].map((reminder, index) => (
-                <div key={index} className="reminder" style={{ backgroundColor: getRandomColor() }}></div>
-              ))}
+              <div className="reminder-container">
+                {reminders[day] && reminders[day].map((reminder, index) => (
+                  <div key={index} className="reminder" style={{ backgroundColor: getRandomColor() }}></div>
+                ))}
+              </div>
               <button className="add-reminder-button" onClick={() => handleAddReminder(day)}>+</button>
             </div>
           ))}
@@ -85,6 +87,7 @@ function Calendar() {
             <div key={index} className="reminder-card">
               <p>{reminder.reminder}</p>
               <p>{reminder.time}</p>
+              <p>{reminder.description}</p>
               <button className="edit-button" onClick={() => handleEditReminder(reminder)}>Edit</button>
               <button className="delete-button" onClick={() => handleDeleteReminder(reminder.id)}>Delete</button>
             </div>
