@@ -6,13 +6,15 @@ import getStore from "./store/getStore";
 import reducers from './reducers';
 import Main from './Main';
 import reportWebVitals from "./reportWebVitals";
-import "./sass/app.scss";
+import './sass/tailwind.css';
 
 ReactDOM.render(
   <React.StrictMode>
     <ReduxProvider store={getStore(reducers)}>
       <BrowserRouter>
-        <Main />
+        <div className="app-container">
+          <Main />
+        </div>
       </BrowserRouter>
     </ReduxProvider>
   </React.StrictMode>,

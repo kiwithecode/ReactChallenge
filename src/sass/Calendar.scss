@@ -1,8 +1,6 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   font-size: 14px;
   line-height: 1.4;
 }
@@ -18,20 +16,12 @@ body.dark-mode {
   align-items: flex-start;
   padding: 20px;
   position: relative;
-}
 
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  margin-bottom: 20px;
-}
-
-.calendar-header h1 {
-  font-size: 24px;
-  margin: 0;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
 }
 
 .button-toggle {
@@ -49,6 +39,11 @@ body.dark-mode {
   &:hover {
     background-color: #0056b3;
   }
+
+  @media (max-width: 768px) {
+    position: static;
+    margin-top: 10px;
+  }
 }
 
 body.dark-mode .button-toggle {
@@ -61,16 +56,24 @@ body.dark-mode .button-toggle {
   gap: 20px;
   width: 100%;
   max-width: 1200px;
-  margin-top: 40px;  /* Añadir margen superior para espacio */
+  margin-top: 40px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-  width: 800px; /* Ancho fijo del calendario */
-  height: 600px; /* Alto fijo del calendario */
+  gap: 5px;
   flex-grow: 1;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(7, 1fr);
+    width: 100%;
+  }
 }
 
 .calendar-grid .day-names {
@@ -88,6 +91,10 @@ body.dark-mode .button-toggle {
   border-radius: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    padding: 5px;
+  }
 }
 
 .day-name {
@@ -95,47 +102,33 @@ body.dark-mode .button-toggle {
   font-weight: bold;
   background: transparent;
   box-shadow: none;
+
+  @media (max-width: 768px) {
+    display: none; /* Oculta los nombres de los días en pantallas pequeñas */
+  }
 }
 
 .calendar-day span {
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 }
 
 .reminder-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 5px;
-  margin-bottom: 10px;
+  gap: 3px;
+  margin-bottom: 5px;
 }
 
 .reminder {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background-color: #000;
-}
-
-.add-reminder-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 0;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 20px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s ease;
-  margin-top: 10px; /* Espacio entre elementos */
-
-  &:hover {
-    background-color: #0056b3;
-  }
 }
 
 body.dark-mode .calendar-day {
@@ -144,17 +137,44 @@ body.dark-mode .calendar-day {
   box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
 }
 
+body.dark-mode .calendar-day span {
+  color: #ffffff;
+}
+
+body.dark-mode .day-name {
+  background: #333;
+  color: #ffffff;
+}
+
 body.dark-mode .calendar-day .reminder {
   background-color: #424242;
   color: #e0f7fa;
 }
 
-body.dark-mode .calendar-day .add-reminder-button {
+.add-reminder-button {
   background-color: #007bff;
   color: #fff;
+  border: none;
+  padding: 0;
+  border-radius: 50%; /* Asegura que el botón sea circular */
+  cursor: pointer;
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
 
   &:hover {
     background-color: #0056b3;
+  }
+
+  @media (max-width: 768px) {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
   }
 }
 
@@ -163,11 +183,21 @@ body.dark-mode .calendar-day .add-reminder-button {
   background: #fff;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-top: 20px;
+    padding-right: 20px; /* Añadir espacio a la derecha */
+  }
 
   h2 {
     font-size: 18px;
     margin: 0 0 10px 0;
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
   }
 
   .reminder-card {
@@ -175,10 +205,14 @@ body.dark-mode .calendar-day .add-reminder-button {
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 8px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
     p {
       margin: 0;
+
+      @media (max-width: 768px) {
+        font-size: 14px;
+      }
     }
 
     .edit-button, .delete-button {
@@ -206,6 +240,10 @@ body.dark-mode .calendar-day .add-reminder-button {
           background-color: #c82333;
         }
       }
+
+      @media (max-width: 768px) {
+        padding: 5px;
+      }
     }
   }
 }
@@ -220,6 +258,7 @@ body.dark-mode .reminder-card {
   box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
 }
 
-body.dark-mode .reminder-card .edit-button, body.dark-mode .reminder-card .delete-button {
+body.dark-mode .reminder-card .edit-button, 
+body.dark-mode .reminder-card .delete-button {
   color: #fff;
 }

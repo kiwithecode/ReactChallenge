@@ -2,50 +2,60 @@ import React, { useState, useEffect } from 'react';
 import '../sass/ReminderModal.scss';
 
 function ReminderModal({ isOpen, onClose, onSave, initialReminder }) {
-  const [reminder, setReminder] = useState(initialReminder ? initialReminder.reminder : '');
-  const [time, setTime] = useState(initialReminder ? initialReminder.time : '');
-  const [description, setDescription] = useState(initialReminder ? initialReminder.description : '');
+  const [reminder, setReminder] = useState('');
+  const [time, setTime] = useState('');
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (initialReminder) {
       setReminder(initialReminder.reminder);
       setTime(initialReminder.time);
+      setDescription(initialReminder.description);
+    } else {
+      setReminder('');
+      setTime('');
+      setDescription('');
     }
   }, [initialReminder]);
 
-  if (!isOpen) return null;
-
   const handleSave = () => {
-    onSave({ reminder, time });
-    setReminder('');
-    setTime('');
+    onSave({ reminder, time, description });
     onClose();
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h2>{initialReminder ? 'Edit Reminder' : 'Add Reminder'}</h2>
-        <input 
-          type="text" 
-          value={reminder} 
-          onChange={(e) => setReminder(e.target.value)} 
-          maxLength="30" 
-          placeholder="Enter reminder" 
-        />
-        <input 
-          type="time" 
-          value={time} 
-          onChange={(e) => setTime(e.target.value)} 
-          placeholder="Enter time" 
-        />
-        <textarea 
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Enter description"
-        />
-        <button onClick={handleSave}>Save</button>
-        <button onClick={onClose}>Cancel</button>
+    <div className="modal">
+      <div className="modal-content">
+        <h2>{initialReminder ? 'Editar Recordatorio' : 'Agregar Recordatorio'}</h2>
+        <label>
+          Recordatorio:
+          <input 
+            type="text" 
+            value={reminder} 
+            onChange={(e) => setReminder(e.target.value)} 
+          />
+        </label>
+        <label>
+          Hora:
+          <input 
+            type="time" 
+            value={time} 
+            onChange={(e) => setTime(e.target.value)} 
+          />
+        </label>
+        <label>
+          Descripción:
+          <textarea 
+            value={description} 
+            onChange={(e) => setDescription(e.target.value)} 
+          />
+        </label>
+        <div className="modal-buttons">
+          <button onClick={handleSave}>Guardar</button>
+          <button onClick={onClose}>Cancelar</button>
+        </div>
       </div>
     </div>
   );

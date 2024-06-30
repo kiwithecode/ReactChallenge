@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addReminder, deleteReminder, editReminder } from '../store/actions';
 import ReminderModal from '../components/ReminderModal';
+import AccordionCard from '../components/AccordionCard';
 import '../sass/Calendar.scss';
 import '../sass/ReminderModal.scss';
 
-const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+// Mueve la función getRandomColor fuera del componente
+const getRandomColor = () => {
+  const letters = '0123456789ABCDEF';
+  return `#${Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * 16)]).join('')}`;
+};
 
 function Calendar() {
   const reminders = useSelector(state => state.reminders);
@@ -13,11 +20,13 @@ function Calendar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedReminder, setSelectedReminder] = useState(null);
+  const [reminderColors, setReminderColors] = useState({});
 
   const daysInMonth = new Date().getDate();
-  const daysArray = [...Array(daysInMonth).keys()].map(day => day + 1);
+  const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
-  const handleAddReminder = (day) => {
+  const handleAddReminder = (day, event) => {
+    event.stopPropagation(); // Evita que el evento se propague al cuadro
     setSelectedDay(day);
     setSelectedReminder(null);
     setIsModalOpen(true);
@@ -27,7 +36,12 @@ function Calendar() {
     if (selectedReminder) {
       dispatch(editReminder(selectedDay, selectedReminder.id, { reminder, time, description }));
     } else {
-      dispatch(addReminder(selectedDay, { reminder, time, description }));
+      const newReminderId = Date.now();
+      dispatch(addReminder(selectedDay, { reminder, time, description, id: newReminderId }));
+      setReminderColors(prevColors => ({
+        ...prevColors,
+        [newReminderId]: getRandomColor()
+      }));
     }
   };
 
@@ -42,15 +56,11 @@ function Calendar() {
 
   const handleDeleteReminder = (reminderId) => {
     dispatch(deleteReminder(selectedDay, reminderId));
-  };
-
-  const getRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
+    setReminderColors(prevColors => {
+      const newColors = { ...prevColors };
+      delete newColors[reminderId];
+      return newColors;
+    });
   };
 
   const toggleDarkMode = () => {
@@ -60,39 +70,24 @@ function Calendar() {
   return (
     <div className="calendar-container">
       <button className="button-toggle" onClick={toggleDarkMode}>
-        Toggle Dark Mode
+        Modo Oscuro
       </button>
       <div className="calendar-content">
-        <div className="calendar-grid">
-          <div className="day-names">
-            {dayNames.map(day => (
-              <div key={day} className="day-name">{day}</div>
-            ))}
-          </div>
-          {daysArray.map(day => (
-            <div key={day} className="calendar-day" onClick={() => handleDayClick(day)}>
-              <span>{day}</span>
-              <div className="reminder-container">
-                {reminders[day] && reminders[day].map((reminder, index) => (
-                  <div key={index} className="reminder" style={{ backgroundColor: getRandomColor() }}></div>
-                ))}
-              </div>
-              <button className="add-reminder-button" onClick={() => handleAddReminder(day)}>+</button>
-            </div>
-          ))}
-        </div>
-        <div className="reminder-list">
-          <h2>Reminders for {selectedDay}</h2>
-          {reminders[selectedDay] && reminders[selectedDay].map((reminder, index) => (
-            <div key={index} className="reminder-card">
-              <p>{reminder.reminder}</p>
-              <p>{reminder.time}</p>
-              <p>{reminder.description}</p>
-              <button className="edit-button" onClick={() => handleEditReminder(reminder)}>Edit</button>
-              <button className="delete-button" onClick={() => handleDeleteReminder(reminder.id)}>Delete</button>
-            </div>
-          ))}
-        </div>
+        <CalendarGrid 
+          daysArray={daysArray} 
+          dayNames={dayNames} 
+          reminders={reminders} 
+          reminderColors={reminderColors} 
+          onDayClick={handleDayClick} 
+          onAddReminder={handleAddReminder} 
+        />
+        <ReminderList 
+          selectedDay={selectedDay} 
+          reminders={reminders[selectedDay]} 
+          reminderColors={reminderColors} 
+          onEditReminder={handleEditReminder} 
+          onDeleteReminder={handleDeleteReminder} 
+        />
       </div>
       <ReminderModal 
         isOpen={isModalOpen} 
@@ -103,5 +98,50 @@ function Calendar() {
     </div>
   );
 }
+
+const CalendarGrid = ({ daysArray, dayNames, reminders, reminderColors, onDayClick, onAddReminder }) => (
+  <div className="calendar-grid">
+    <div className="day-names">
+      {dayNames.map(day => (
+        <div key={day} className="day-name">{day}</div>
+      ))}
+    </div>
+    {daysArray.map(day => (
+      <div key={day} className="calendar-day" onClick={() => onDayClick(day)}>
+        <span>{day}</span>
+        <div className="reminder-container">
+          {reminders[day]?.map((reminder, index) => (
+            <div 
+              key={index} 
+              className="reminder" 
+              style={{ backgroundColor: reminderColors[reminder.id] || getRandomColor() }}
+            ></div>
+          ))}
+        </div>
+        <button 
+          className="add-reminder-button" 
+          onClick={(event) => onAddReminder(day, event)}
+        >
+          +
+        </button>
+      </div>
+    ))}
+  </div>
+);
+
+const ReminderList = ({ selectedDay, reminders, reminderColors, onEditReminder, onDeleteReminder }) => (
+  <div className="reminder-list">
+    <h2>Recordatorios para {selectedDay}</h2>
+    {reminders?.map((reminder, index) => (
+      <AccordionCard 
+        key={index} 
+        reminder={reminder} 
+        color={reminderColors[reminder.id]} 
+        onEdit={() => onEditReminder(reminder)}
+        onDelete={() => onDeleteReminder(reminder.id)}
+      />
+    ))}
+  </div>
+);
 
 export default Calendar;
