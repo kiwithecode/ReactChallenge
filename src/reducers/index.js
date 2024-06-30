@@ -1,5 +1,8 @@
-import { combineReducers} from 'redux';
+import { combineReducers } from 'redux';
+import remindersReducer from './remindersReducer';
 
-const reducers = {};
+const reducers = {
+  reminders: remindersReducer
+};
 
 export default combineReducers(reducers);
