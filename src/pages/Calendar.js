@@ -47,6 +47,7 @@ function Calendar() {
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
+    setSelectedReminder(null); // Asegúrate de limpiar el recordatorio seleccionado
   };
 
   const handleEditReminder = (reminder) => {

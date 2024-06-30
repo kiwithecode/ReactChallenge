@@ -16,7 +16,7 @@ function ReminderModal({ isOpen, onClose, onSave, initialReminder }) {
       setTime('');
       setDescription('');
     }
-  }, [initialReminder]);
+  }, [initialReminder, isOpen]);
 
   const handleSave = () => {
     onSave({ reminder, time, description });
