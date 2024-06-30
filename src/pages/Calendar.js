@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addReminder, deleteReminder, editReminder } from '../store/actions';
-import ReminderModal from '../components/ReminderModal';
-import AccordionCard from '../components/AccordionCard';
+import ReminderModal from '../components/organisms/ReminderModal';
+import AccordionCard from '../components/organisms/AccordionCard';
+import CalendarGrid from '../components/CalendarGrid';
 import '../sass/Calendar.scss';
 import '../sass/ReminderModal.scss';
 
 const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
-// Mueve la función getRandomColor fuera del componente
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
   return `#${Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * 16)]).join('')}`;
 };
 
-function Calendar() {
+const Calendar = () => {
   const reminders = useSelector(state => state.reminders);
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,18 +26,23 @@ function Calendar() {
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   const handleAddReminder = (day, event) => {
-    event.stopPropagation(); // Evita que el evento se propague al cuadro
+    event.stopPropagation();
     setSelectedDay(day);
     setSelectedReminder(null);
     setIsModalOpen(true);
   };
 
   const handleSaveReminder = ({ reminder, time, description }) => {
+    if (!reminder) {
+      return; // No se crea un recordatorio si falta el campo de recordatorio
+    }
+
+    const reminderData = { reminder, time, description };
     if (selectedReminder) {
-      dispatch(editReminder(selectedDay, selectedReminder.id, { reminder, time, description }));
+      dispatch(editReminder(selectedDay, selectedReminder.id, reminderData));
     } else {
       const newReminderId = Date.now();
-      dispatch(addReminder(selectedDay, { reminder, time, description, id: newReminderId }));
+      dispatch(addReminder(selectedDay, { ...reminderData, id: newReminderId }));
       setReminderColors(prevColors => ({
         ...prevColors,
         [newReminderId]: getRandomColor()
@@ -47,7 +52,7 @@ function Calendar() {
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
-    setSelectedReminder(null); // Asegúrate de limpiar el recordatorio seleccionado
+    setSelectedReminder(null);
   };
 
   const handleEditReminder = (reminder) => {
@@ -98,37 +103,7 @@ function Calendar() {
       />
     </div>
   );
-}
-
-const CalendarGrid = ({ daysArray, dayNames, reminders, reminderColors, onDayClick, onAddReminder }) => (
-  <div className="calendar-grid">
-    <div className="day-names">
-      {dayNames.map(day => (
-        <div key={day} className="day-name">{day}</div>
-      ))}
-    </div>
-    {daysArray.map(day => (
-      <div key={day} className="calendar-day" onClick={() => onDayClick(day)}>
-        <span>{day}</span>
-        <div className="reminder-container">
-          {reminders[day]?.map((reminder, index) => (
-            <div 
-              key={index} 
-              className="reminder" 
-              style={{ backgroundColor: reminderColors[reminder.id] || getRandomColor() }}
-            ></div>
-          ))}
-        </div>
-        <button 
-          className="add-reminder-button" 
-          onClick={(event) => onAddReminder(day, event)}
-        >
-          +
-        </button>
-      </div>
-    ))}
-  </div>
-);
+};
 
 const ReminderList = ({ selectedDay, reminders, reminderColors, onEditReminder, onDeleteReminder }) => (
   <div className="reminder-list">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../sass/ReminderModal.scss';
+import '../../sass/ReminderModal.scss';
 
 function ReminderModal({ isOpen, onClose, onSave, initialReminder }) {
   const [reminder, setReminder] = useState('');
@@ -19,6 +19,7 @@ function ReminderModal({ isOpen, onClose, onSave, initialReminder }) {
   }, [initialReminder, isOpen]);
 
   const handleSave = () => {
+    if (!reminder) return; // No se guarda si el campo de recordatorio está vacío
     onSave({ reminder, time, description });
     onClose();
   };
