@@ -19,7 +19,7 @@ function ReminderModal({ isOpen, onClose, onSave, initialReminder }) {
   }, [initialReminder, isOpen]);
 
   const handleSave = () => {
-    if (!reminder) return; // No se guarda si el campo de recordatorio está vacío
+    if (!reminder) return; 
     onSave({ reminder, time, description });
     onClose();
   };

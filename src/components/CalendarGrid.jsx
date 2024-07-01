@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const CalendarGrid = ({ daysArray, dayNames, reminders, reminderColors, onDayClick, onAddReminder }) => {
-  // Definir getRandomColor dentro de CalendarGrid
+  
   const getRandomColor = () => {
     const letters = '0123456789ABCDEF';
     return `#${Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * 16)]).join('')}`;

@@ -38,7 +38,7 @@ const Calendar = () => {
 
   const handleSaveReminder = ({ reminder, time, description }) => {
     if (!reminder) {
-      return; // No se crea un recordatorio si falta el campo de recordatorio
+      return; 
     }
 
     const reminderData = { reminder, time, description };
