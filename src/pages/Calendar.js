@@ -13,6 +13,9 @@ const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
   return `#${Array.from({ length: 6 }, () => letters[Math.floor(Math.random() * 16)]).join('')}`;
 };
+const getDaysInMonth = (month, year) => {
+  return new Date(year, month + 1, 0).getDate();
+};
 
 const Calendar = () => {
   const reminders = useSelector(state => state.reminders);
@@ -22,7 +25,8 @@ const Calendar = () => {
   const [selectedReminder, setSelectedReminder] = useState(null);
   const [reminderColors, setReminderColors] = useState({});
 
-  const daysInMonth = new Date().getDate();
+  const currentDate = new Date();
+  const daysInMonth = getDaysInMonth(currentDate.getMonth(), currentDate.getFullYear());
   const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   const handleAddReminder = (day, event) => {
@@ -104,6 +108,7 @@ const Calendar = () => {
     </div>
   );
 };
+
 
 const ReminderList = ({ selectedDay, reminders, reminderColors, onEditReminder, onDeleteReminder }) => (
   <div className="reminder-list">
